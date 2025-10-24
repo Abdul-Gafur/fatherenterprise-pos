@@ -1982,49 +1982,58 @@ class ProductUtil extends Util
 
     public function getVariationStockHistory($business_id, $variation_id, $location_id)
     {
-        $stock_history = Transaction::leftjoin('transaction_sell_lines as sl',
-            'sl.transaction_id', '=', 'transactions.id')
-                                ->leftjoin('purchase_lines as pl',
-                                    'pl.transaction_id', '=', 'transactions.id')
-                                ->leftjoin('stock_adjustment_lines as al',
-                                    'al.transaction_id', '=', 'transactions.id')
-                                ->leftjoin('transactions as return', 'transactions.return_parent_id', '=', 'return.id')
-                                ->leftjoin('purchase_lines as rpl',
-                                    'rpl.transaction_id', '=', 'return.id')
-                                ->leftjoin('transaction_sell_lines as rsl',
-                                        'rsl.transaction_id', '=', 'return.id')
-                                ->leftjoin('contacts as c', 'transactions.contact_id', '=', 'c.id')
-                                ->where('transactions.location_id', $location_id)
-                                ->where(function ($q) use ($variation_id) {
-                                    $q->where('sl.variation_id', $variation_id)
-                                        ->orWhere('pl.variation_id', $variation_id)
-                                        ->orWhere('al.variation_id', $variation_id)
-                                        ->orWhere('rpl.variation_id', $variation_id)
-                                        ->orWhere('rsl.variation_id', $variation_id);
-                                })
-                                ->whereIn('transactions.type', ['sell', 'purchase', 'stock_adjustment', 'opening_stock', 'sell_transfer', 'purchase_transfer', 'production_purchase', 'purchase_return', 'sell_return', 'production_sell'])
-                                ->select(
-                                    'transactions.id as transaction_id',
-                                    'transactions.type as transaction_type',
-                                    'sl.quantity as sell_line_quantity',
-                                    'pl.quantity as purchase_line_quantity',
-                                    'rsl.quantity_returned as sell_return',
-                                    'rpl.quantity_returned as purchase_return',
-                                    'al.quantity as stock_adjusted',
-                                    'pl.quantity_returned as combined_purchase_return',
-                                    'transactions.return_parent_id',
-                                    'transactions.transaction_date',
-                                    'transactions.status',
-                                    'transactions.invoice_no',
-                                    'transactions.ref_no',
-                                    'transactions.additional_notes',
-                                    'c.name as contact_name',
-                                    'c.supplier_business_name',
-                                    'pl.secondary_unit_quantity as purchase_secondary_unit_quantity',
-                                    'sl.secondary_unit_quantity as sell_secondary_unit_quantity'
-                                )
-                                ->orderBy('transactions.transaction_date', 'asc')
-                                ->get();
+        $stock_history = Transaction::leftJoin('transaction_sell_lines as sl', 'sl.transaction_id', '=', 'transactions.id')
+    ->leftJoin('purchase_lines as pl', 'pl.transaction_id', '=', 'transactions.id')
+    ->leftJoin('stock_adjustment_lines as al', 'al.transaction_id', '=', 'transactions.id')
+    ->leftJoin('transactions as return', 'transactions.return_parent_id', '=', 'return.id')
+    ->leftJoin('purchase_lines as rpl', 'rpl.transaction_id', '=', 'return.id')
+    ->leftJoin('transaction_sell_lines as rsl', 'rsl.transaction_id', '=', 'return.id')
+    ->leftJoin('contacts as c', 'transactions.contact_id', '=', 'c.id')
+    ->leftJoin('users as u', 'transactions.created_by', '=', 'u.id') // Join with the users table
+    ->where('transactions.location_id', $location_id)
+    ->where(function ($q) use ($variation_id) {
+        $q->where('sl.variation_id', $variation_id)
+            ->orWhere('pl.variation_id', $variation_id)
+            ->orWhere('al.variation_id', $variation_id)
+            ->orWhere('rpl.variation_id', $variation_id)
+            ->orWhere('rsl.variation_id', $variation_id);
+    })
+    ->whereIn('transactions.type', [
+        'sell', 
+        'purchase', 
+        'stock_adjustment', 
+        'opening_stock', 
+        'sell_transfer', 
+        'purchase_transfer', 
+        'production_purchase', 
+        'purchase_return', 
+        'sell_return', 
+        'production_sell'
+    ])
+    ->select(
+        'transactions.id as transaction_id',
+        'transactions.type as transaction_type',
+        'sl.quantity as sell_line_quantity',
+        'pl.quantity as purchase_line_quantity',
+        'rsl.quantity_returned as sell_return',
+        'rpl.quantity_returned as purchase_return',
+        'al.quantity as stock_adjusted',
+        'pl.quantity_returned as combined_purchase_return',
+        'transactions.return_parent_id',
+        'transactions.transaction_date',
+        'transactions.status',
+        'transactions.invoice_no',
+        'transactions.ref_no',
+        'transactions.additional_notes',
+        'c.name as contact_name',
+        'c.supplier_business_name',
+        'pl.secondary_unit_quantity as purchase_secondary_unit_quantity',
+        'sl.secondary_unit_quantity as sell_secondary_unit_quantity',
+        DB::raw("CONCAT(COALESCE(u.surname, ''), ' ', COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) as added_by") // Select added by user
+    )
+    ->orderBy('transactions.transaction_date', 'asc')
+    ->get();
+
 
         $stock_history_array = [];
         $stock = 0;
@@ -2035,6 +2044,7 @@ class ProductUtil extends Util
                 'transaction_id' => $stock_line->transaction_id,
                 'contact_name' => $stock_line->contact_name,
                 'supplier_business_name' => $stock_line->supplier_business_name,
+                'added_by' => $stock_line->added_by,
             ];
             if ($stock_line->transaction_type == 'sell') {
                 if ($stock_line->status != 'final') {
@@ -2052,6 +2062,8 @@ class ProductUtil extends Util
                     'ref_no' => $stock_line->invoice_no,
                     'sell_secondary_unit_quantity' => ! empty($stock_line->sell_secondary_unit_quantity) ? $this->roundQuantity($stock_line->sell_secondary_unit_quantity) : 0,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                    'added_by' => $stock_line->added_by,
+
                 ]);
             } elseif ($stock_line->transaction_type == 'purchase') {
                 if ($stock_line->status != 'received') {
@@ -2068,6 +2080,8 @@ class ProductUtil extends Util
                     'ref_no' => $stock_line->ref_no,
                     'purchase_secondary_unit_quantity' => ! empty($stock_line->purchase_secondary_unit_quantity) ? $this->roundQuantity($stock_line->purchase_secondary_unit_quantity) : 0,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                    'added_by' => $stock_line->added_by,
+
                 ]);
             } elseif ($stock_line->transaction_type == 'stock_adjustment') {
                 $quantity_change = -1 * $stock_line->stock_adjusted;
@@ -2079,6 +2093,8 @@ class ProductUtil extends Util
                     'type_label' => __('stock_adjustment.stock_adjustment'),
                     'ref_no' => $stock_line->ref_no,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                    'added_by' => $stock_line->added_by,
+
                 ]);
             } elseif ($stock_line->transaction_type == 'opening_stock') {
                 $quantity_change = $stock_line->purchase_line_quantity;
@@ -2093,6 +2109,8 @@ class ProductUtil extends Util
                     'additional_notes' => $stock_line->additional_notes,
                     'purchase_secondary_unit_quantity' => ! empty($stock_line->purchase_secondary_unit_quantity) ? $this->roundQuantity($stock_line->purchase_secondary_unit_quantity) : 0,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                    'added_by' => $stock_line->added_by,
+
                 ]);
             } elseif ($stock_line->transaction_type == 'sell_transfer') {
                 if ($stock_line->status != 'final') {
@@ -2107,6 +2125,8 @@ class ProductUtil extends Util
                     'type_label' => __('lang_v1.stock_transfers').' ('.__('lang_v1.out').')',
                     'ref_no' => $stock_line->ref_no,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                    'added_by' => $stock_line->added_by,
+
                 ]);
             } elseif ($stock_line->transaction_type == 'purchase_transfer') {
                 if ($stock_line->status != 'received') {
@@ -2122,6 +2142,8 @@ class ProductUtil extends Util
                     'type_label' => __('lang_v1.stock_transfers').' ('.__('lang_v1.in').')',
                     'ref_no' => $stock_line->ref_no,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                    'added_by' => $stock_line->added_by,
+
                 ]);
             } elseif ($stock_line->transaction_type == 'production_sell') {
                 if ($stock_line->status != 'final') {
@@ -2136,6 +2158,8 @@ class ProductUtil extends Util
                     'type_label' => __('manufacturing::lang.ingredient'),
                     'ref_no' => '',
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                    'added_by' => $stock_line->added_by,
+
                 ]);
             } elseif ($stock_line->transaction_type == 'production_purchase') {
                 $quantity_change = $stock_line->purchase_line_quantity;
@@ -2147,6 +2171,8 @@ class ProductUtil extends Util
                     'type_label' => __('manufacturing::lang.manufactured'),
                     'ref_no' => $stock_line->ref_no,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                                    'added_by' => $stock_line->added_by,
+
                 ]);
             } elseif ($stock_line->transaction_type == 'purchase_return') {
                 $quantity_change = -1 * ($stock_line->combined_purchase_return + $stock_line->purchase_return);
@@ -2158,6 +2184,8 @@ class ProductUtil extends Util
                     'type_label' => __('lang_v1.purchase_return'),
                     'ref_no' => $stock_line->ref_no,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                                    'added_by' => $stock_line->added_by,
+
                 ]);
             } elseif ($stock_line->transaction_type == 'sell_return') {
                 $quantity_change = $stock_line->sell_return;
@@ -2169,6 +2197,8 @@ class ProductUtil extends Util
                     'type_label' => __('lang_v1.sell_return'),
                     'ref_no' => $stock_line->invoice_no,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit),
+                                    'added_by' => $stock_line->added_by,
+
                 ]);
             }
         }

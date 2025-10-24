@@ -57,7 +57,7 @@
 
 	$subtotal += $row_total;
 	$lot_number = $var['lot_number'];
-	$transaction_date = $var['transaction_date'];
+    $transaction_date = now()->toDateTimeString(); // Current date and time
 	$purchase_line_note = $var['purchase_line_note'];
 	@endphp
 

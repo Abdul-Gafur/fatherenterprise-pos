@@ -146,35 +146,15 @@
         @endforeach
         @endif
         <div class="clearfix"></div>
-        <div class="col-sm-8">
-            <div class="form-group">
-                {!! Form::label('product_description', __('lang_v1.product_description') . ':') !!}
-                {!! Form::textarea('product_description', !empty($duplicate_product->product_description) ? $duplicate_product->product_description : null, ['class' => 'form-control']); !!}
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                {!! Form::label('image', __('lang_v1.product_image') . ':') !!}
-                {!! Form::file('image', ['id' => 'upload_image', 'accept' => 'image/*',
-                'required' => $is_image_required, 'class' => 'upload-element']); !!}
-                <small>
-                    <p class="help-block">@lang('purchase.max_file_size', ['size' => (config('constants.document_size_limit') / 1000000)]) <br> @lang('lang_v1.aspect_ratio_should_be_1_1')</p>
-                </small>
-            </div>
-        </div>
+        <!--<div class="col-sm-8">-->
+        <!--    <div class="form-group">-->
+        <!--        {!! Form::label('product_description', __('lang_v1.product_description') . ':') !!}-->
+        <!--        {!! Form::textarea('product_description', !empty($duplicate_product->product_description) ? $duplicate_product->product_description : null, ['class' => 'form-control']); !!}-->
+        <!--    </div>-->
+        <!--</div>-->
+        
     </div>
-    <div class="col-sm-4">
-        <div class="form-group">
-            {!! Form::label('product_brochure', __('lang_v1.product_brochure') . ':') !!}
-            {!! Form::file('product_brochure', ['id' => 'product_brochure', 'accept' => implode(',', array_keys(config('constants.document_upload_mimes_types')))]); !!}
-            <small>
-                <p class="help-block">
-                    @lang('purchase.max_file_size', ['size' => (config('constants.document_size_limit') / 1000000)])
-                    @includeIf('components.document_help_text')
-                </p>
-            </small>
-        </div>
-    </div>
+    
     @endcomponent
 
     @component('components.widget', ['class' => 'box-primary'])
@@ -204,24 +184,7 @@
         </div>
         @endif
 
-        <div class="col-sm-4">
-            <div class="form-group">
-                <br>
-                <label>
-                    {!! Form::checkbox('enable_sr_no', 1, !(empty($duplicate_product)) ? $duplicate_product->enable_sr_no : false, ['class' => 'input-icheck']); !!} <strong>@lang('lang_v1.enable_imei_or_sr_no')</strong>
-                </label> @show_tooltip(__('lang_v1.tooltip_sr_no'))
-            </div>
-        </div>
-
-        <div class="col-sm-4">
-            <div class="form-group">
-                <br>
-                <label>
-                    {!! Form::checkbox('not_for_selling', 1, !(empty($duplicate_product)) ? $duplicate_product->not_for_selling : false, ['class' => 'input-icheck']); !!} <strong>@lang('lang_v1.not_for_selling')</strong>
-                </label> @show_tooltip(__('lang_v1.tooltip_not_for_selling'))
-            </div>
-        </div>
-
+        
         <div class="clearfix"></div>
 
         <!-- Rack, Row & position number -->
@@ -253,12 +216,6 @@
         @endforeach
         @endif
 
-        <div class="col-sm-4">
-            <div class="form-group">
-                {!! Form::label('weight', __('lang_v1.weight') . ':') !!}
-                {!! Form::text('weight', !empty($duplicate_product->weight) ? $duplicate_product->weight : null, ['class' => 'form-control', 'placeholder' => __('lang_v1.weight')]); !!}
-            </div>
-        </div>
         @php
         $custom_labels = json_decode(session('business.custom_labels'), true);
         $product_custom_fields = !empty($custom_labels['product']) ? $custom_labels['product'] : [];
@@ -292,12 +249,7 @@
             @endif
         @endforeach
 
-        <div class="col-sm-3">
-            <div class="form-group">
-                {!! Form::label('preparation_time_in_minutes', __('lang_v1.preparation_time_in_minutes') . ':') !!}
-                {!! Form::number('preparation_time_in_minutes', !empty($duplicate_product->preparation_time_in_minutes) ? $duplicate_product->preparation_time_in_minutes : null, ['class' => 'form-control', 'placeholder' => __('lang_v1.preparation_time_in_minutes')]); !!}
-            </div>
-        </div>
+        
         <!--custom fields-->
         <div class="clearfix"></div>
         @include('layouts.partials.module_form_part')

@@ -95,6 +95,7 @@
 				<th>@lang('lang_v1.date')</th>
 				<th>@lang('purchase.ref_no')</th>
 				<th>@lang('lang_v1.customer_supplier_info')</th>
+				<th>@lang('lang_v1.added_by')</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -151,6 +152,9 @@
 						@if(!empty($history['supplier_business_name']))
 						 - {{$history['supplier_business_name']}}
 						@endif
+					</td>
+					<td>
+						{{$history['added_by']}}
 					</td>
 				</tr>
 			@empty
