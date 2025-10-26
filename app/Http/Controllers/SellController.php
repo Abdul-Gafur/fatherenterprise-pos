@@ -342,6 +342,38 @@ class SellController extends Controller
             }
             $sales_order_statuses = Transaction::sales_order_statuses();
             $datatable = Datatables::of($sells)
+            ->filter(function ($query) {
+                    $keyword = request()->input('search.value');
+                    if (!empty($keyword)) {
+                        $query->where(function ($q) use ($keyword) {
+                            // 1. Re-implement the original searchable columns
+                            // (Based on your DataTables JS config and 'filterColumn' calls)
+                            $q->where('transactions.invoice_no', 'like', "%{$keyword}%")
+                                ->orWhere('contacts.name', 'like', "%{$keyword}%")
+                                ->orWhere('contacts.supplier_business_name', 'like', "%{$keyword}%")
+                                ->orWhere('contacts.mobile', 'like', "%{$keyword}%")
+                                ->orWhere('bl.name', 'like', "%{$keyword}%") // Business Location
+                                ->orWhere('transactions.payment_status', 'like', "%{$keyword}%")
+                                ->orWhere('transactions.shipping_status', 'like', "%{$keyword}%")
+                                ->orWhere('u.first_name', 'like', "%{$keyword}%") // Added by
+                                ->orWhere('transactions.additional_notes', 'like', "%{$keyword}%")
+                                ->orWhere('transactions.staff_note', 'like', "%{$keyword}%")
+                                ->orWhere('transactions.shipping_details', 'like', "%{$keyword}%");
+
+                            // 2. Add NEW search logic for products and variations
+                            // This checks for transactions that HAVE sell lines...
+                            $q->orWhereHas('sell_lines', function ($sell_line_query) use ($keyword) {
+                                // ...where the related product name or SKU matches
+                                $sell_line_query->whereHas('product', function ($product_query) use ($keyword) {
+                                    $product_query->where('name', 'like', "%{$keyword}%")
+                                                  ->orWhere('sku', 'like', "%{$keyword}%");
+                                })
+                                // ...or where the related variation name or SKU matches
+                                ;
+                            });
+                        });
+                    }
+                })
                 ->addColumn(
                     'action',
                     function ($row) use ($only_shipments, $is_admin, $sale_type) {
