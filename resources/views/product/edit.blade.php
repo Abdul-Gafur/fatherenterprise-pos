@@ -228,9 +228,16 @@
           <div class="form-group">
             <br>
             <label>
-              {!! Form::checkbox('not_for_selling', 1, $product->not_for_selling, ['class' => 'input-icheck']); !!} <strong>@lang('lang_v1.not_for_selling')</strong>
+              {!! Form::checkbox('not_for_selling', 1, $product->not_for_selling, ['class' => 'input-icheck', 'id' => 'not_for_selling_chk']); !!} <strong>@lang('lang_v1.not_for_selling')</strong>
             </label> @show_tooltip(__('lang_v1.tooltip_not_for_selling'))
           </div>
+        </div>
+        <div class="col-sm-4 @if(!$product->enable_stock) hide @endif" id="not_for_selling_limit_div">
+            <div class="form-group">
+                {!! Form::label('not_for_selling_limit', 'Not for selling limit' . ':') !!}
+                {!! Form::text('not_for_selling_limit', @num_format($product->not_for_selling_limit), ['class' => 'form-control input_number', 'placeholder' => __('lang_v1.quantity_limit')]); !!}
+                <p class="help-block">Not for selling limit</p>
+            </div>
         </div>
 
         <div class="clearfix"></div>

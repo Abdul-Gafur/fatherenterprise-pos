@@ -1613,7 +1613,17 @@ class ProductUtil extends Util
                 );
 
         if (! is_null($not_for_selling)) {
-            $query->where('products.not_for_selling', $not_for_selling);
+            $query->where(function ($q) use ($not_for_selling) {
+                if ($not_for_selling == 0) {
+                    $q->where('products.not_for_selling', 0)
+                      ->where(function ($q2) {
+                          $q2->whereNull('products.not_for_selling_limit')
+                             ->orWhere('VLD.qty_available', '>', DB::raw('products.not_for_selling_limit'));
+                      });
+                } else {
+                    $q->where('products.not_for_selling', 1);
+                }
+            });
         }
 
         if (! empty($price_group_id)) {

@@ -155,8 +155,16 @@
               {{ $single_payment_line->card_transaction_number }}
               
             @elseif($single_payment_line->method == "cheque")
-              <strong>@lang('lang_v1.cheque_number') :</strong>
-              {{ $single_payment_line->cheque_number }}
+              <strong>@lang('lang_v1.cheque_no') :</strong>
+              {{ $single_payment_line->cheque_number }}<br>
+              @if(!empty($single_payment_line->cheque_bank))
+              <strong>@lang('lang_v1.cheque_bank') :</strong>
+              {{ $single_payment_line->cheque_bank }}<br>
+              @endif
+              @if(!empty($single_payment_line->received_by))
+              <strong>@lang('lang_v1.received_by') :</strong>
+              {{ $single_payment_line->received_by }}<br>
+              @endif
             @elseif($single_payment_line->method == "bank_transfer")
 
             @elseif($single_payment_line->method == "custom_pay_1")

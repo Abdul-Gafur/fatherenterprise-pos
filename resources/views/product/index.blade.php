@@ -269,10 +269,6 @@
                         data: 'mass_delete'
                     },
                     {
-                        data: 'image',
-                        name: 'products.image'
-                    },
-                    {
                         data: 'action',
                         name: 'action'
                     },

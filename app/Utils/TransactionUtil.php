@@ -758,6 +758,8 @@ class TransactionUtil extends Util
                         'card_month' => isset($payment['card_month']) ? $payment['card_month'] : null,
                         'card_security' => isset($payment['card_security']) ? $payment['card_security'] : null,
                         'cheque_number' => isset($payment['cheque_number']) ? $payment['cheque_number'] : null,
+                        'cheque_bank' => isset($payment['cheque_bank']) ? $payment['cheque_bank'] : null,
+                        'received_by' => isset($payment['received_by']) ? $payment['received_by'] : null,
                         'bank_account_number' => isset($payment['bank_account_number']) ? $payment['bank_account_number'] : null,
                         'note' => isset($payment['note']) ? $payment['note'] : null,
                         'paid_on' => $paid_on,
@@ -5283,6 +5285,19 @@ class TransactionUtil extends Util
                 $note .= '<small>('.__('lang_v1.change_return').')</small>';
             }
 
+            // Add cheque details if payment method is cheque
+            if ($payment->method == 'cheque') {
+                if (! empty($payment->cheque_number)) {
+                    $note .= '<br><small>'.__('lang_v1.cheque_no').': '.$payment->cheque_number.'</small>';
+                }
+                if (! empty($payment->cheque_bank)) {
+                    $note .= '<br><small>'.__('lang_v1.cheque_bank').': '.$payment->cheque_bank.'</small>';
+                }
+                if (! empty($payment->received_by)) {
+                    $note .= '<br><small>'.__('lang_v1.received_by').': '.$payment->received_by.'</small>';
+                }
+            }
+
             $ledger[] = [
                 'date' => $payment->paid_on,
                 'ref_no' => $payment->payment_ref_no,
@@ -5941,7 +5956,7 @@ class TransactionUtil extends Util
         $business_id = auth()->user()->business_id;
         $inputs = $request->only(['amount', 'method', 'note', 'card_number', 'card_holder_name',
             'card_transaction_number', 'card_type', 'card_month', 'card_year', 'card_security',
-            'cheque_number', 'bank_account_number', ]);
+            'cheque_number', 'cheque_bank', 'received_by', 'bank_account_number', ]);
 
         //payment type option is available on pay contact modal
         $is_reverse = $request->has('is_reverse') && $request->input('is_reverse') == 1 ? true : false;

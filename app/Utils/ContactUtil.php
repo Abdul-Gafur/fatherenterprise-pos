@@ -237,7 +237,6 @@ class ContactUtil extends Util
             DB::raw("SUM(IF(t.type = 'opening_balance', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as opening_balance_paid"),
             DB::raw('MAX(DATE(transaction_date)) as max_transaction_date'),
             DB::raw("SUM(IF(t.type = 'ledger_discount', final_total, 0)) as total_ledger_discount"),
-            't.transaction_date',
         ]);
 
         if (in_array($type, ['supplier', 'both'])) {

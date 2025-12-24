@@ -18,6 +18,12 @@
             $method = !empty($payment_types[$payment->method]) ? $payment_types[$payment->method] : '';
             if ($payment->method == 'cheque') {
                 $method .= '<br>(' . __('lang_v1.cheque_no') . ': ' . $payment->cheque_number . ')';
+                if (!empty($payment->cheque_bank)) {
+                    $method .= '<br>(' . __('lang_v1.cheque_bank') . ': ' . $payment->cheque_bank . ')';
+                }
+                if (!empty($payment->received_by)) {
+                    $method .= '<br>(' . __('lang_v1.received_by') . ': ' . $payment->received_by . ')';
+                }
             } elseif ($payment->method == 'card') {
                 $method .= '<br>(' . __('lang_v1.card_transaction_no') . ': ' . $payment->card_transaction_number . ')';
             } elseif ($payment->method == 'bank_transfer') {

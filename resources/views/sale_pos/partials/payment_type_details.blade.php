@@ -46,10 +46,22 @@
 	<div class="clearfix"></div>
 </div>
 <div class="payment_details_div @if( $payment_line['method'] !== 'cheque' ) {{ 'hide' }} @endif" data-type="cheque" >
-	<div class="col-md-12">
+	<div class="col-md-6">
 		<div class="form-group">
 			{!! Form::label("cheque_number_$row_index",__('lang_v1.cheque_no')) !!}
 			{!! Form::text("payment[$row_index][cheque_number]", $payment_line['cheque_number'], ['class' => 'form-control', 'placeholder' => __('lang_v1.cheque_no'), 'id' => "cheque_number_$row_index"]); !!}
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="form-group">
+			{!! Form::label("cheque_bank_$row_index",__('lang_v1.cheque_bank')) !!}
+			{!! Form::text("payment[$row_index][cheque_bank]", $payment_line['cheque_bank'], ['class' => 'form-control', 'placeholder' => __('lang_v1.cheque_bank'), 'id' => "cheque_bank_$row_index"]); !!}
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="form-group">
+			{!! Form::label("received_by_$row_index",__('lang_v1.received_by')) !!}
+			{!! Form::text("payment[$row_index][received_by]", $payment_line['received_by'], ['class' => 'form-control', 'placeholder' => __('lang_v1.received_by'), 'id' => "received_by_$row_index"]); !!}
 		</div>
 	</div>
 </div>

@@ -143,7 +143,7 @@ class ContactController extends Controller
             )
             ->addColumn(
                 'return_due',
-                '<span class="return_due" data-orig-value="{{$total_purchase_return - $purchase_return_paid}}" data-highlight=false>@format_currency($total_purchase_return - $purchase_return_paid)'
+                '<span class="return_due" data-orig-value="{{$total_purchase_return - $purchase_return_paid}}" data-highlight=false>@format_currency($total_purchase_return - $purchase_return_paid)</span>'
             )
             ->addColumn(
                 'action',
@@ -324,7 +324,7 @@ class ContactController extends Controller
             ) {
             $from_transaction_date = \Carbon::now()->subDays(30)->format('Y-m-d');
             $query->havingRaw("max_transaction_date < '{$from_transaction_date}'")
-                     ->orHavingRaw('transaction_date IS NULL');
+                     ->orHavingRaw('max_transaction_date IS NULL');
         }
 
         if (
@@ -1627,6 +1627,8 @@ class ContactController extends Controller
                     't.return_parent_id',
                     't.id as transaction_id',
                     'transaction_payments.cheque_number',
+                    'transaction_payments.cheque_bank',
+                    'transaction_payments.received_by',
                     'transaction_payments.card_transaction_number',
                     'transaction_payments.bank_account_number',
                     'transaction_payments.id as DT_RowId',

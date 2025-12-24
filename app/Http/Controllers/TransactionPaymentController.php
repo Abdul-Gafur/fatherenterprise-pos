@@ -74,7 +74,7 @@ class TransactionPaymentController extends Controller
             if ($transaction->payment_status != 'paid') {
                 $inputs = $request->only(['amount', 'method', 'note', 'card_number', 'card_holder_name',
                     'card_transaction_number', 'card_type', 'card_month', 'card_year', 'card_security',
-                    'cheque_number', 'bank_account_number', ]);
+                    'cheque_number', 'cheque_bank', 'received_by', 'bank_account_number', ]);
                 $inputs['paid_on'] = $this->transactionUtil->uf_date($request->input('paid_on'), true);
                 $inputs['transaction_id'] = $transaction->id;
                 $inputs['amount'] = $this->transactionUtil->num_uf($inputs['amount']);
@@ -240,7 +240,7 @@ class TransactionPaymentController extends Controller
 
             $inputs = $request->only(['amount', 'method', 'note', 'card_number', 'card_holder_name',
                 'card_transaction_number', 'card_type', 'card_month', 'card_year', 'card_security',
-                'cheque_number', 'bank_account_number', ]);
+                'cheque_number', 'cheque_bank', 'received_by', 'bank_account_number', ]);
             $inputs['paid_on'] = $this->transactionUtil->uf_date($request->input('paid_on'), true);
             $inputs['amount'] = $this->transactionUtil->num_uf($inputs['amount']);
 
@@ -694,9 +694,11 @@ class TransactionPaymentController extends Controller
                     'transaction_payments.payment_ref_no',
                     'transaction_payments.document',
                     'transaction_payments.id',
-                    'cheque_number',
-                    'card_transaction_number',
-                    'bank_account_number'
+                    'transaction_payments.cheque_number',
+                    'transaction_payments.cheque_bank',
+                    'transaction_payments.received_by',
+                    'transaction_payments.card_transaction_number',
+                    'transaction_payments.bank_account_number'
                 )
                 ->groupBy('transaction_payments.id');
 
