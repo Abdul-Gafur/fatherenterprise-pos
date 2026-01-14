@@ -66,6 +66,21 @@ jobs:
           PHP_BIN=$(command -v php82 || command -v php)
           
           # 4. Run the commands using that discovered binary
+          # Raw mysqldump backup
+          if [ -f .env ]; then
+             DB_HOST=$(grep "^DB_HOST=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//')
+             DB_PORT=$(grep "^DB_PORT=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//')
+             DB_DATABASE=$(grep "^DB_DATABASE=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//')
+             DB_USERNAME=$(grep "^DB_USERNAME=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//')
+             DB_PASSWORD=$(grep "^DB_PASSWORD=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//')
+             
+             mkdir -p storage/backups
+             FILE="storage/backups/backup_$(date +%Y%m%d_%H%M%S).sql"
+             echo "Backing up DB to $FILE..."
+             
+             mysqldump -h "$DB_HOST" -P "${DB_PORT:-3306}" -u "$DB_USERNAME" -p"$DB_PASSWORD" --no-tablespaces "$DB_DATABASE" > "$FILE" || echo "Backup failed!"
+          fi
+
           $PHP_BIN artisan migrate --force
           $PHP_BIN artisan optimize:clear
           $PHP_BIN artisan config:cache
