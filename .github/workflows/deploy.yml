@@ -36,11 +36,9 @@ jobs:
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: 🔑 Install SSH Key
-      uses: shimataro/ssh-key-action@v2
+      uses: webfactory/ssh-agent@v0.9.0
       with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: 'placeholder-value-to-prevent-input-error'
-        if_key_exists: replace
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: 📂 Sync Files (Rsync)
       run: |
