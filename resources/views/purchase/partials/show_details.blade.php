@@ -247,6 +247,9 @@
   </div>
   <br>
   <div class="row">
+    @php
+      $total_paid = 0;
+    @endphp
     @if(!empty($purchase->type == 'purchase'))
     <div class="col-sm-12 col-xs-12">
       <h4>{{ __('sale.payment_info') }}:</h4>
@@ -262,9 +265,7 @@
             <th>{{ __('sale.payment_mode') }}</th>
             <th>{{ __('sale.payment_note') }}</th>
           </tr>
-          @php
-            $total_paid = 0;
-          @endphp
+
           @forelse($purchase->payment_lines as $payment_line)
             @php
               $total_paid += $payment_line->amount;
@@ -373,10 +374,27 @@
             </tr>
           @endif
           <tr>
-            <th>@lang('purchase.purchase_total'):</th>
+            <th>@lang('sale.total_payable'):</th>
             <td></td>
             <td><span class="display_currency pull-right" data-currency_symbol="true" >{{ $purchase->final_total }}</span></td>
           </tr>
+          @if($purchase->type != 'purchase_order')
+          <tr>
+            <th>@lang('sale.total_paid'):</th>
+            <td></td>
+            <td><span class="display_currency pull-right" data-currency_symbol="true" >{{ $total_paid }}</span></td>
+          </tr>
+          <tr>
+            <th>@lang('sale.total_remaining'):</th>
+            <td></td>
+            <td>
+              @php
+                $total_paid = (string) $total_paid;
+              @endphp
+              <span class="display_currency pull-right" data-currency_symbol="true" >{{ $purchase->final_total - $total_paid }}</span>
+            </td>
+          </tr>
+          @endif
         </table>
       </div>
     </div>

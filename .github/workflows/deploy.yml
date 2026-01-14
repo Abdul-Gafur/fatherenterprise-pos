@@ -1,0 +1,66 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  web-deploy:
+    name: 🎉 Build & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+
+    - name: 🟢 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+        coverage: none
+
+    - name: 📦 Install Composer Dependencies
+      run: composer install --no-ansi --no-interaction --no-progress --no-dev --optimize-autoloader
+
+    - name: 🔑 Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+        if_key_exists: replace
+
+    - name: 📂 Sync Files (Rsync)
+      run: |
+        rsync -avz --delete \
+          --exclude='.git*' \
+          --exclude='node_modules' \
+          --exclude='.env' \
+          --exclude='tests' \
+          --exclude='.github' \
+          --exclude='.editorconfig' \
+          ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/sites/23a/4/4bebba9906/public_html/fatherentpos_new
+
+    - name: 🚀 Run Post-Deployment Commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          # 1. Force the shell to load the environment paths
+          export PATH=/usr/local/bin:/usr/bin:/bin:/usr/php82/usr/bin:$PATH
+          
+          # 2. Change directory
+          cd /home/sites/23a/4/4bebba9906/public_html/fatherentpos_new
+          
+          # 3. Use 'command -v' to find wherever php82 or php is hiding
+          PHP_BIN=$(command -v php82 || command -v php)
+          
+          # 4. Run the commands using that discovered binary
+          $PHP_BIN artisan migrate --force
+          $PHP_BIN artisan optimize:clear
+          $PHP_BIN artisan config:cache
+          $PHP_BIN artisan route:cache
+          $PHP_BIN artisan view:cache
+          $PHP_BIN artisan storage:link
