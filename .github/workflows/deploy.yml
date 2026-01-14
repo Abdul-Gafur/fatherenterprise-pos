@@ -35,12 +35,17 @@ jobs:
       uses: shimataro/ssh-key-action@v2
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+    - name: 🔑 Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: 'just-a-placeholder-so-we-dont-need-to-manually-add-it-to-secrets'
         if_key_exists: replace
 
     - name: 📂 Sync Files (Rsync)
       run: |
         rsync -avz --delete \
+          -e "ssh -o StrictHostKeyChecking=no" \
           --exclude='.git*' \
           --exclude='node_modules' \
           --exclude='.env' \
