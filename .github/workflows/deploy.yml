@@ -39,12 +39,13 @@ jobs:
       uses: shimataro/ssh-key-action@v2
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+        known_hosts: 'placeholder-value-to-prevent-input-error'
         if_key_exists: replace
 
     - name: 📂 Sync Files (Rsync)
       run: |
         rsync -avz --delete \
+          -e "ssh -o StrictHostKeyChecking=no" \
           --exclude='.git*' \
           --exclude='node_modules' \
           --exclude='.env' \
@@ -59,6 +60,7 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        opts: -o StrictHostKeyChecking=no
         script: |
           # 1. Force the shell to load the environment paths
           export PATH=/usr/local/bin:/usr/bin:/bin:/usr/php82/usr/bin:$PATH
