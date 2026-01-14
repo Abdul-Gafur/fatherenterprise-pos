@@ -54,7 +54,6 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        opts: -o StrictHostKeyChecking=no
         script: |
           # 1. Force the shell to load the environment paths
           export PATH=/usr/local/bin:/usr/bin:/bin:/usr/php82/usr/bin:$PATH
@@ -62,10 +61,10 @@ jobs:
           # 2. Change directory
           cd /home/sites/23a/4/4bebba9906/public_html/fatherentpos_new
           
-          # 3. Use 'command -v' to find wherever php82 or php is hiding
+          # 3. Use 'command -v' to find binary paths
           PHP_BIN=$(command -v php82 || command -v php)
-          
-          # 4. Run the commands using that discovered binary
+          DUMP_BIN=$(command -v mysqldump)
+
           # Raw mysqldump backup
           if [ -f .env ]; then
              DB_HOST=$(grep "^DB_HOST=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//')
@@ -78,9 +77,20 @@ jobs:
              FILE="storage/backups/backup_$(date +%Y%m%d_%H%M%S).sql"
              echo "Backing up DB to $FILE..."
              
-             mysqldump -h "$DB_HOST" -P "${DB_PORT:-3306}" -u "$DB_USERNAME" -p"$DB_PASSWORD" --no-tablespaces "$DB_DATABASE" > "$FILE" || echo "Backup failed!"
+             if [ ! -z "$DUMP_BIN" ]; then
+                "$DUMP_BIN" -h "$DB_HOST" -P "${DB_PORT:-3306}" -u "$DB_USERNAME" -p"$DB_PASSWORD" --no-tablespaces "$DB_DATABASE" > "$FILE" 2>&1
+                if [ $? -eq 0 ]; then
+                   echo "Backup successful!"
+                else
+                   echo "Backup command failed. Output:"
+                   cat "$FILE"
+                fi
+             else
+                echo "mysqldump or mariadb-dump not found in PATH."
+             fi
           fi
 
+          # 4. Run the commands using that discovered binary
           $PHP_BIN artisan migrate --force
           $PHP_BIN artisan optimize:clear
           $PHP_BIN artisan config:cache
