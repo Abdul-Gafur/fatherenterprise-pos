@@ -55,4 +55,4 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd "/home/sites/23a/4/4bebba9906/public_html/fatherentpos_new" && chmod +x deploy.sh && ./deploy.sh
+          cd "/home/sites/23a/4/4bebba9906/public_html/fatherentpos_new" && bash deploy.sh
