@@ -74,7 +74,7 @@
                 <tfoot>
                     <tr>
                         <td>@lang('sale.total')</td>
-                        <td><span class="display_currency" data-currency_symbol="true">{{$total_expense}}</span></td>
+                        <td><strong>@lang('report.total_expense'):</strong> <span class="display_currency" data-currency_symbol="true">{{$total_expense}}</span></td>
                     </tr>
                 </tfoot>
             </table>

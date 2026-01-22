@@ -66,20 +66,20 @@
                     <tfoot>
                         <tr class="bg-gray font-17 text-center footer-total">
                             <td colspan="4"><strong>@lang('sale.total'):</strong></td>
-                            <td class="footer_total_card_payment"></td>
-                            <td class="footer_total_cheque_payment"></td>
-                            <td class="footer_total_cash_payment"></td>
-                            <td class="footer_total_bank_transfer_payment"></td>
-                            <td class="footer_total_advance_payment"></td>'
-                            <td class="footer_total_custom_pay_1"></td>
-                            <td class="footer_total_custom_pay_2"></td>
-                            <td class="footer_total_custom_pay_3"></td>
-                            <td class="footer_total_custom_pay_4"></td>
-                            <td class="footer_total_custom_pay_5"></td>
-                            <td class="footer_total_custom_pay_6"></td>
-                            <td class="footer_total_custom_pay_7"></td>
-                            <td class="footer_total_other_payments"></td>
-                            <td class="footer_total"></td>
+                            <td><strong>@lang('cash_register.total_card_slips'):</strong> <span class="footer_total_card_payment"></span></td>
+                            <td><strong>@lang('cash_register.total_cheques'):</strong> <span class="footer_total_cheque_payment"></span></td>
+                            <td><strong>@lang('cash_register.total_cash'):</strong> <span class="footer_total_cash_payment"></span></td>
+                            <td><strong>@lang('lang_v1.total_bank_transfer'):</strong> <span class="footer_total_bank_transfer_payment"></span></td>
+                            <td><strong>@lang('lang_v1.total_advance_payment'):</strong> <span class="footer_total_advance_payment"></span></td>'
+                            <td><strong>{{$payment_types['custom_pay_1']}}:</strong> <span class="footer_total_custom_pay_1"></span></td>
+                            <td><strong>{{$payment_types['custom_pay_2']}}:</strong> <span class="footer_total_custom_pay_2"></span></td>
+                            <td><strong>{{$payment_types['custom_pay_3']}}:</strong> <span class="footer_total_custom_pay_3"></span></td>
+                            <td><strong>{{$payment_types['custom_pay_4']}}:</strong> <span class="footer_total_custom_pay_4"></span></td>
+                            <td><strong>{{$payment_types['custom_pay_5']}}:</strong> <span class="footer_total_custom_pay_5"></span></td>
+                            <td><strong>{{$payment_types['custom_pay_6']}}:</strong> <span class="footer_total_custom_pay_6"></span></td>
+                            <td><strong>{{$payment_types['custom_pay_7']}}:</strong> <span class="footer_total_custom_pay_7"></span></td>
+                            <td><strong>@lang('cash_register.other_payments'):</strong> <span class="footer_total_other_payments"></span></td>
+                            <td><strong>@lang('sale.total'):</strong> <span class="footer_total"></span></td>
                             <td></td>
                         </tr>
                     </tfoot>

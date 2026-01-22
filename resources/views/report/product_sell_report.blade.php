@@ -134,12 +134,12 @@
                                 <tfoot>
                                     <tr class="bg-gray font-17 footer-total text-center">
                                         <td colspan="8"><strong>@lang('sale.total'):</strong></td>
-                                        <td id="footer_total_sold"></td>
+                                        <td>@lang('sale.qty'): <span id="footer_total_sold"></span></td>
                                         <td></td>
                                         <td></td>
-                                        <td id="footer_tax"></td>
+                                        <td>@lang('sale.tax'): <span id="footer_tax"></span></td>
                                         <td></td>
-                                        <td><span class="display_currency" id="footer_subtotal" data-currency_symbol ="true"></span></td>
+                                        <td>@lang('sale.total'): <span class="display_currency" id="footer_subtotal" data-currency_symbol ="true"></span></td>
                                         <td></td>
                                     </tr>
                                 </tfoot>
@@ -187,8 +187,8 @@
                                 <tfoot>
                                     <tr class="bg-gray font-17 footer-total text-center">
                                         <td colspan="4"><strong>@lang('sale.total'):</strong></td>
-                                        <td id="footer_total_grouped_sold"></td>
-                                        <td><span class="display_currency" id="footer_grouped_subtotal" data-currency_symbol ="true"></span></td>
+                                        <td>@lang('report.total_unit_sold'): <span id="footer_total_grouped_sold"></span></td>
+                                        <td>@lang('sale.total'): <span class="display_currency" id="footer_grouped_subtotal" data-currency_symbol ="true"></span></td>
                                     </tr>
                                 </tfoot>
                             </table>

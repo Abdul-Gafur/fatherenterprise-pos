@@ -102,14 +102,14 @@
                         <tfoot>
                             <tr class="bg-gray font-17 text-center footer-total">
                                 <td colspan="7"><strong>@lang('sale.total'):</strong></td>
-                                <td id="footer_total_pp" 
-                                    class="display_currency" data-currency_symbol="true"></td>
+                                <td><strong>@lang('lang_v1.purchase_price'):</strong> <span id="footer_total_pp" 
+                                    class="display_currency" data-currency_symbol="true"></span></td>
                                 <td colspan="4"></td>
-                                <td id="footer_total_qty"></td>
-                                <td id="footer_total_sp"
-                                    class="display_currency" data-currency_symbol="true"></td>
-                                <td id="footer_total_subtotal"
-                                    class="display_currency" data-currency_symbol="true"></td>
+                                <td><strong>@lang('lang_v1.sell_quantity'):</strong> <span id="footer_total_qty"></span></td>
+                                <td><strong>@lang('lang_v1.selling_price'):</strong> <span id="footer_total_sp"
+                                    class="display_currency" data-currency_symbol="true"></span></td>
+                                <td><strong>@lang('sale.subtotal'):</strong> <span id="footer_total_subtotal"
+                                    class="display_currency" data-currency_symbol="true"></span></td>
                             </tr>
                         </tfoot>
                     </table>

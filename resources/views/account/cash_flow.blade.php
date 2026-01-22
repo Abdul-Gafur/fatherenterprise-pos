@@ -69,8 +69,8 @@
                 <tfoot>
                     <tr class="bg-gray font-17 footer-total text-center">
                         <td colspan="5"><strong>@lang('sale.total'):</strong></td>
-                        <td class="footer_total_debit"></td>
-                        <td class="footer_total_credit"></td>
+                        <td><strong>@lang('account.debit'):</strong> <span class="footer_total_debit"></span></td>
+                        <td><strong>@lang('account.credit'):</strong> <span class="footer_total_credit"></span></td>
                         <td colspan="2"></td>
                     </tr>
                 </tfoot>
