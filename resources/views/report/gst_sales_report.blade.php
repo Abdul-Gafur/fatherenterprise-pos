@@ -61,12 +61,12 @@
                     <tfoot>
                         <tr class="bg-gray font-17 footer-total text-center">
                             <td colspan="9"><strong>@lang('sale.total'):</strong></td>
-                            <td class="total_taxable_value"></td>
+                            <td><strong>@lang('lang_v1.taxable_value'):</strong> <span class="total_taxable_value"></span></td>
                             @foreach($taxes as $tax)
-                                <td class="tax_{{$tax['id']}}_total">
-                                </td>
+                                <td><strong>{{$tax['name']}}:</strong> <span class="tax_{{$tax['id']}}_total">
+                                </span></td>
                             @endforeach
-                            <td class="line_total"></td>
+                            <td><strong>@lang('sale.total'):</strong> <span class="line_total"></span></td>
                         </tr>
                     </tfoot>
                 </table>

@@ -19,7 +19,7 @@
             <th>@lang('lang_v1.shipping_status')</th>
             <th>@lang('lang_v1.total_items')</th>
             <th>@lang('lang_v1.types_of_service')</th>
-            <th>{{ $custom_labels['types_of_service']['custom_field_1'] ?? __('lang_v1.service_custom_field_1' )}}</th>
+            <th>{{ $custom_labels['types_of_service']['custom_field_1'] ?? __('lang_v1.service_custom_field_1')}}</th>
             <th>@lang('lang_v1.added_by')</th>
             <th>@lang('sale.sell_note')</th>
             <th>@lang('sale.staff_note')</th>
@@ -33,10 +33,11 @@
             <td colspan="6"><strong>@lang('sale.total'):</strong></td>
             <td class="footer_payment_status_count"></td>
             <td class="payment_method_count"></td>
-            <td class="footer_sale_total"></td>
-            <td class="footer_total_paid"></td>
-            <td class="footer_total_remaining"></td>
-            <td class="footer_total_sell_return_due"></td>
+            <td><strong>@lang('sale.total'):</strong> <span class="footer_sale_total"></span></td>
+            <td><strong>@lang('sale.total_paid'):</strong> <span class="footer_total_paid"></span></td>
+            <td><strong>@lang('lang_v1.sell_due'):</strong> <span class="footer_total_remaining"></span></td>
+            <td><strong>@lang('lang_v1.sell_return_due'):</strong> <span class="footer_total_sell_return_due"></span>
+            </td>
             <td colspan="2"></td>
             <td class="service_type_count"></td>
             <td colspan="7"></td>

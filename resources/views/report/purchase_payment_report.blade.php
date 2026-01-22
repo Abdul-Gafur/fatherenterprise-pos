@@ -68,7 +68,7 @@
                         <tfoot>
                             <tr class="bg-gray font-17 footer-total text-center">
                                 <td colspan="3"><strong>@lang('sale.total'):</strong></td>
-                                <td><span class="display_currency" id="footer_total_amount" data-currency_symbol ="true"></span></td>
+                                <td><strong>@lang('sale.amount'):</strong> <span class="display_currency" id="footer_total_amount" data-currency_symbol ="true"></span></td>
                                 <td colspan="4"></td>
                             </tr>
                         </tfoot>
